@@ -48,6 +48,17 @@ class Runtime:
             path.mkdir(parents=True)
 
 
+def locate_localstore(path):
+    prev = None
+    while path != prev:
+        candidate = path / ".jlm"
+        if candidate.exists():
+            return candidate.resolve()
+        prev = path
+        path = path.parent
+    raise KnownError("Cannot locate `.jlm` local directory")
+
+
 class Application:
     @classmethod
     def consume(cls, dry_run, verbose, julia=None, **kwargs):
@@ -65,7 +76,7 @@ class Application:
         self.julia = _julia
         self.rt = Runtime(dry_run, verbose)
         self.homestore = HomeStore()
-        self.localstore = LocalStore(Path.cwd() / ".jlm")
+        self.localstore = LocalStore(locate_localstore(Path.cwd()))
 
     sysimage_name = "sys." + dlext
 
