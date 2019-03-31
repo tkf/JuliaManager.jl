@@ -30,8 +30,11 @@ class Runtime:
     def warn(self, message):
         print(message, file=sys.stderr)
 
-    def check_call(self, cmd, **kwargs):
+    def info_run(self, cmd):
         self.info("Run: " + " ".join(map(shlex.quote, cmd)))
+
+    def check_call(self, cmd, **kwargs):
+        self.info_run(cmd)
         if self.dry_run:
             return
         subprocess.check_call(cmd, *kwargs)
@@ -82,7 +85,7 @@ class Application:
 
     def julia_cmd(self):
         cmd = [self.effective_julia]
-        cmd.extend(["--sysimage", self.effective_sysimage])
+        cmd.extend(["--sysimage", str(self.effective_sysimage)])
         return cmd
 
     @property
@@ -116,6 +119,9 @@ class Application:
         env["JLM_PRECOMPILE_KEY"] = self.precompile_key
         cmd = self.julia_cmd()
         cmd.extend(arguments)
+        self.rt.info_run(cmd)
+        if self.dry_run:
+            return
         os.execvpe(cmd[0], cmd, env)
 
     def cli_init(self, sysimage):
