@@ -112,6 +112,7 @@ class Application:
         self.create_default_sysimage()
 
     def initialize_localstore(self):
+        self.localstore.path = Path.cwd() / ".jlm"
         self.rt.ensuredir(self.localstore.path)
 
     def cli_run(self, arguments):
