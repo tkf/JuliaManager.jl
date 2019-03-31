@@ -1,22 +1,26 @@
 """
+Command line interface to manage Julia's system images.
 """
 
 import argparse
 import subprocess
 import sys
+import textwrap
 
 from .application import Application
 from .utils import KnownError
 
 doc_run = """
-Run `julia` executable (or default executable configured by `jlm
-init`) with appropriate system image.
+Run `julia` executable with appropriate system image.
+
+If argument `julia` is not given, the default executable configured by
+`jlm init` is used.
 """
 
 doc_init = """
 Initialize `jlm`.
 
-It does:
+`jlm init` does:
 
 * Create a data store (`.jlm` directory).
 * Install `JuliaManager.jl` if it is not installed for `<julia>`.  [TODO]
@@ -44,6 +48,15 @@ The path to system image.
 """
 
 
+def splitdoc(doc):
+    lines = textwrap.dedent((doc or "").lstrip()).splitlines()
+    try:
+        i = lines.index("")
+    except ValueError:
+        i = len(lines)
+    return "\n".join(lines[:i]), "\n".join(lines[i:])
+
+
 class FormatterClass(
     argparse.RawDescriptionHelpFormatter, argparse.ArgumentDefaultsHelpFormatter
 ):
@@ -60,19 +73,22 @@ def make_parser(doc=__doc__):
     subparsers = parser.add_subparsers()
 
     def subp(command, func, doc=None):
-        doc = doc or func.__doc__
-        title = None
-        for title in filter(None, map(str.strip, (doc or "").splitlines())):
-            break
+        title, body = splitdoc(doc or func.__doc__)
         p = subparsers.add_parser(
-            command, formatter_class=FormatterClass, help=title, description=doc
+            command,
+            formatter_class=FormatterClass,
+            help=title,
+            description=title,
+            epilog=body,
         )
         p.set_defaults(func=func)
         return p
 
     p = subp("run", Application.cli_run, doc_run)
     p.add_argument("julia", default="julia", nargs="?", help=doc_julia)
-    p.add_argument("arguments", nargs="*")
+    p.add_argument(
+        "arguments", nargs="*", help="Arguments and options passed to `julia`."
+    )
 
     p = subp("init", Application.cli_init, doc_init)
     p.add_argument("julia", default="julia", nargs="?", help=doc_julia)
@@ -129,6 +145,8 @@ def preparse_run(args):
 
     # Parse whatever after `run` _unless_ it looks like an option.
     if irun < len(args) and not args[irun].startswith("-"):
+        irun += 1
+    elif irun < len(args) and args[irun] in ("-h", "--help"):
         irun += 1
     if irun < len(args) and args[irun] == "--":
         irun += 1
