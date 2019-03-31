@@ -79,6 +79,15 @@ def make_parser(doc=__doc__):
 
     p = subp("create-default-sysimage", Application.cli_create_default_sysimage)
     p.add_argument("julia", default="julia", nargs="?")
+    p.add_argument(
+        "--force",
+        "-f",
+        action="store_true",
+        help="""
+        Re-compile default system image for `julia` even if it already
+        exists.
+        """,
+    )
 
     return parser
 
