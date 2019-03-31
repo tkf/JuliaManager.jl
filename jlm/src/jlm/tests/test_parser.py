@@ -1,6 +1,6 @@
 import pytest
 
-from ..cli import parse_args, Application
+from ..cli import Application, parse_args
 
 
 def run_args(**kwargs):
