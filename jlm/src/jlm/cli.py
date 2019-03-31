@@ -98,6 +98,20 @@ def make_parser(doc=__doc__):
         """,
     )
 
+    locate_parser = subparsers.add_parser(
+        "locate",
+        formatter_class=FormatterClass,
+        help="Show paths to related files and directories",
+    )
+    subparsers = locate_parser.add_subparsers()
+
+    p = subp("sysimage", Application.cli_locate_sysimage)
+    p.add_argument("julia", default="julia", nargs="?", help=doc_julia)
+
+    p = subp("base", Application.cli_locate_base)
+    p = subp("dir", Application.cli_locate_local_dir)
+    p = subp("home-dir", Application.cli_locate_home_dir)
+
     return parser
 
 

@@ -152,3 +152,19 @@ class Application:
             self.create_default_sysimage()
         else:
             self.ensure_default_sysimage()
+
+    def cli_locate_sysimage(self):
+        """ Print system image that would be used for `julia`. """
+        print(self.effective_sysimage, end="")
+
+    def cli_locate_base(self):
+        """ Print directory for which `jlm init` was executed. """
+        print(self.localstore.path.parent, end="")
+
+    def cli_locate_local_dir(self):
+        """ Print directory in which `jlm` information is stored. """
+        print(self.localstore.path, end="")
+
+    def cli_locate_home_dir(self):
+        """ Print directory in which `jlm` global information is stored. """
+        print(self.homestore.path, end="")
