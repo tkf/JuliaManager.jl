@@ -53,7 +53,7 @@ class LocalStore(BaseStore):
         except AttributeError:
             pass
 
-        self.path = locate_localstore()
+        self.path = locate_localstore(Path.cwd())
         return self._path
 
     @path.setter
