@@ -97,12 +97,15 @@ html_static_path = ["_static"]
 #
 # https://alabaster.readthedocs.io/en/latest/installation.html
 html_sidebars = {
+    # Suppress sidebar.  It's just a short single page ATM so it
+    # doesn't make any sense to have it.  Also, I can show screenshots
+    # without rescaling this way.
     "**": [
-        "about.html",
-        "navigation.html",
-        "relations.html",
-        "searchbox.html",
-        "donate.html",
+        # 'about.html',
+        # 'navigation.html',
+        # 'relations.html',
+        # 'searchbox.html',
+        # 'donate.html',
     ]
 }
 
