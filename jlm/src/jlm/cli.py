@@ -32,6 +32,15 @@ It does:
    <https://github.com/JuliaLang/julia/pull/29914>`_
 """
 
+doc_julia = """
+The name of Julia executable on `$PATH` or a path to the Julia
+executable.
+"""
+
+doc_sysimage = """
+The path to system image.
+"""
+
 
 class FormatterClass(
     argparse.RawDescriptionHelpFormatter, argparse.ArgumentDefaultsHelpFormatter
@@ -60,25 +69,25 @@ def make_parser(doc=__doc__):
         return p
 
     p = subp("run", Application.cli_run, doc_run)
-    p.add_argument("julia", default="julia", nargs="?")
+    p.add_argument("julia", default="julia", nargs="?", help=doc_julia)
     p.add_argument("arguments", nargs="*")
 
     p = subp("init", Application.cli_init, doc_init)
-    p.add_argument("julia", default="julia", nargs="?")
-    p.add_argument("--sysimage", "-J")
+    p.add_argument("julia", default="julia", nargs="?", help=doc_julia)
+    p.add_argument("--sysimage", "-J", help=doc_sysimage)
 
     p = subp("set-default", Application.cli_set_default)
-    p.add_argument("julia", default="julia")
+    p.add_argument("julia", default="julia", help=doc_julia)
 
     p = subp("set-sysimage", Application.cli_set_sysimage)
-    p.add_argument("julia", default="julia", nargs="?")
-    p.add_argument("sysimage")
+    p.add_argument("julia", default="julia", nargs="?", help=doc_julia)
+    p.add_argument("sysimage", help=doc_sysimage)
 
     p = subp("unset-sysimage", Application.cli_unset_sysimage)
-    p.add_argument("julia", default="julia", nargs="?")
+    p.add_argument("julia", default="julia", nargs="?", help=doc_julia)
 
     p = subp("create-default-sysimage", Application.cli_create_default_sysimage)
-    p.add_argument("julia", default="julia", nargs="?")
+    p.add_argument("julia", default="julia", nargs="?", help=doc_julia)
     p.add_argument(
         "--force",
         "-f",
