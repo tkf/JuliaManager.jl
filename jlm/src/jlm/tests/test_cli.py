@@ -30,6 +30,14 @@ def test_smoke(initialized, args):
 
 def test_run(initialized):
     subprocess.check_call(
-        [sys.executable, "-m", cli.__name__, "run", "-e", "Base.banner()"]
+        [
+            sys.executable,
+            "-m",
+            cli.__name__,
+            "run",
+            "--startup-file=no",
+            "-e",
+            "Base.banner()",
+        ]
     )
     assert (initialized / ".jlm").is_dir()
