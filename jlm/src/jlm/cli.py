@@ -150,19 +150,20 @@ def parse_args(args=None):
 
 def main(args=None):
     kwargs = vars(parse_args())
-    func = kwargs.pop("func")
-    enable_pdb = kwargs.pop("pdb")
-    app, kwargs = Application.consume(**kwargs)
 
+    enable_pdb = kwargs.pop("pdb")
     if enable_pdb:
         import pdb
 
     try:
-        return func(app, **kwargs)
-    except Exception:
-        if enable_pdb:
-            pdb.post_mortem()
-        raise
+        try:
+            func = kwargs.pop("func")
+            app, kwargs = Application.consume(**kwargs)
+            return func(app, **kwargs)
+        except Exception:
+            if enable_pdb:
+                pdb.post_mortem()
+            raise
     except (KnownError, subprocess.CalledProcessError) as err:
         print(err, file=sys.stderr)
         sys.exit(1)
