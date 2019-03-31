@@ -5,5 +5,5 @@
 /.tox
 /MANIFEST
 /dist
-/doc/build
+/docs/build
 /src/*.egg-info
