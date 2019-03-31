@@ -1,3 +1,4 @@
+import os
 import shlex
 import subprocess
 import sys
@@ -60,14 +61,33 @@ class Application:
         self.verbose = verbose
         self.julia = _julia
         self.rt = Runtime(dry_run, verbose)
-        self.homestore = HomeStore(self.julia)
-        self.localstore = LocalStore(self.julia, Path.cwd() / ".jlm")
+        self.homestore = HomeStore()
+        self.localstore = LocalStore(Path.cwd() / ".jlm")
 
     sysimage_name = "sys." + dlext
 
+    def default_sysimage(self, julia):
+        return self.homestore.execpath(julia) / self.sysimage_name
+
     @property
-    def default_sysimage(self):
-        return self.homestore.execpath / self.sysimage_name
+    def effective_sysimage(self):
+        julia = self.effective_julia
+        return self.localstore.sysimage(julia) or self.default_sysimage(julia)
+
+    @property
+    def effective_julia(self):
+        if self.julia is not None:
+            return self.julia
+        return self.localstore.default_julia
+
+    def julia_cmd(self):
+        cmd = [self.effective_julia]
+        cmd.extend(["--sysimage", self.effective_sysimage])
+        return cmd
+
+    @property
+    def precompile_key(self):
+        return self.effective_sysimage
 
     def compile_patched_sysimage(self, sysimage):
         code = """
@@ -77,12 +97,12 @@ class Application:
         self.rt.check_call([self.julia, "-e", code, str(sysimage)])
 
     def create_default_sysimage(self):
-        sysimage = self.default_sysimage
+        sysimage = self.default_sysimage(self.julia)
         self.rt.ensuredir(sysimage.parent)
         self.compile_patched_sysimage(sysimage)
 
     def ensure_default_sysimage(self):
-        sysimage = self.default_sysimage
+        sysimage = self.default_sysimage(self.julia)
         if sysimage.exists():
             self.rt.print("Default system image {} already exists.".format(sysimage))
             return
@@ -90,6 +110,13 @@ class Application:
 
     def initialize_localstore(self):
         self.rt.ensuredir(self.localstore.path)
+
+    def cli_run(self, arguments):
+        env = os.environ.copy()
+        env["JLM_PRECOMPILE_KEY"] = self.precompile_key
+        cmd = self.julia_cmd()
+        cmd.extend(arguments)
+        os.execvpe(cmd[0], cmd, env)
 
     def cli_init(self, sysimage):
         self.initialize_localstore()

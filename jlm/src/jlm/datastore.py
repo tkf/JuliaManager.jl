@@ -20,9 +20,8 @@ def atomicopen(path, *args):
 
 
 class BaseStore:
-    @property
-    def execpath(self):
-        m = hashlib.sha1(self.julia.encode("utf-8"))
+    def execpath(self, julia):
+        m = hashlib.sha1(julia.encode("utf-8"))
         return self.path / "exec" / m.hexdigest()
 
 
@@ -30,14 +29,12 @@ class HomeStore(BaseStore):
 
     defaultpath = Path.home() / ".julia" / "jlm"
 
-    def __init__(self, julia, path=defaultpath):
-        self.julia = julia
+    def __init__(self, path=defaultpath):
         self.path = Path(path)
 
 
 class LocalStore(BaseStore):
-    def __init__(self, julia, path):
-        self.julia = julia
+    def __init__(self, path):
         self.path = Path(path)
 
     def loaddata(self):
@@ -62,3 +59,10 @@ class LocalStore(BaseStore):
 
         with atomicopen(datapath, "w") as file:
             json.dump(data, file)
+
+    @property
+    def default_julia(self):
+        return self.loaddata()["config"]["default"]
+
+    def sysimage(self, julia):
+        return self.loaddata()["config"]["runtime"].get(julia, None)

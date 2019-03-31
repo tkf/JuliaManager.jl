@@ -8,6 +8,11 @@ import sys
 from .application import Application
 from .utils import KnownError
 
+doc_run = """
+Run `julia` executable (or default executable configured by `jlm
+init`) with appropriate system image.
+"""
+
 doc_init = """
 Initialize `jlm`.
 
@@ -52,6 +57,10 @@ def make_parser(doc=__doc__):
         )
         p.set_defaults(func=func)
         return p
+
+    p = subp("run", Application.cli_run, doc_run)
+    p.add_argument("julia", default="julia", nargs="?")
+    p.add_argument("arguments", nargs="*")
 
     p = subp("init", Application.cli_init, doc_init)
     p.add_argument("julia", default="julia", nargs="?")
