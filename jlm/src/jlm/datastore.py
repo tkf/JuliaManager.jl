@@ -48,8 +48,11 @@ class LocalStore(BaseStore):
             "config": {"runtime": {}},
         }
 
+    def storedata(self, data):
+        with atomicopen(self.path / "data.json", "w") as file:
+            json.dump(data, file)
+
     def set(self, config):
-        datapath = self.path / "data.json"
         data = self.loaddata()
 
         if "default" in config:
@@ -57,8 +60,7 @@ class LocalStore(BaseStore):
         if "runtime" in config:
             data["config"]["runtime"].update(config["runtime"])
 
-        with atomicopen(datapath, "w") as file:
-            json.dump(data, file)
+        self.storedata(data)
 
     @property
     def default_julia(self):
@@ -66,3 +68,13 @@ class LocalStore(BaseStore):
 
     def sysimage(self, julia):
         return self.loaddata()["config"]["runtime"].get(julia, None)
+
+    def set_sysimage(self, julia, sysimage):
+        config = self.loaddata()["config"]
+        config["runtime"][julia] = sysimage
+        self.set(config)
+
+    def unset_sysimage(self, julia):
+        data = self.loaddata()
+        data["config"]["runtime"].pop(julia, None)
+        self.storedata(data)

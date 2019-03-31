@@ -48,7 +48,8 @@ def make_parser(doc=__doc__):
 
     subparsers = parser.add_subparsers()
 
-    def subp(command, func, doc):
+    def subp(command, func, doc=None):
+        doc = doc or func.__doc__
         title = None
         for title in filter(None, map(str.strip, (doc or "").splitlines())):
             break
@@ -65,6 +66,19 @@ def make_parser(doc=__doc__):
     p = subp("init", Application.cli_init, doc_init)
     p.add_argument("julia", default="julia", nargs="?")
     p.add_argument("--sysimage", "-J")
+
+    p = subp("set-default", Application.cli_set_default)
+    p.add_argument("julia", default="julia")
+
+    p = subp("set-sysimage", Application.cli_set_sysimage)
+    p.add_argument("julia", default="julia", nargs="?")
+    p.add_argument("sysimage")
+
+    p = subp("unset-sysimage", Application.cli_unset_sysimage)
+    p.add_argument("julia", default="julia", nargs="?")
+
+    p = subp("create-default-sysimage", Application.cli_create_default_sysimage)
+    p.add_argument("julia", default="julia", nargs="?")
 
     return parser
 

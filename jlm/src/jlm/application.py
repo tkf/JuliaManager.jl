@@ -127,3 +127,19 @@ class Application:
             self.ensure_default_sysimage()
         if not self.dry_run:
             self.localstore.set(config)
+
+    def cli_set_default(self):
+        """ Set default Julia executable to be used. """
+        self.localstore.set({"default": self.julia})
+
+    def cli_set_sysimage(self, sysimage):
+        """ Set system image for `juila`. """
+        self.localstore.set_sysimage(self.julia, sysimage)
+
+    def cli_unset_sysimage(self):
+        """ Unset system image for `juila`. """
+        self.localstore.unset_sysimage(self.julia)
+
+    def cli_create_default_sysimage(self):
+        """ Compile default system image for `julia`. """
+        self.create_default_sysimage()
