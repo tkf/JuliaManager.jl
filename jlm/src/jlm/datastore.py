@@ -5,6 +5,7 @@ from contextlib import contextmanager
 from pathlib import Path
 
 from . import __version__
+from .utils import KnownError
 
 
 @contextmanager
@@ -17,6 +18,17 @@ def atomicopen(path, *args):
     finally:
         if tmppath.exists():
             os.remove(tmppath)
+
+
+def locate_localstore(path):
+    prev = None
+    while path != prev:
+        candidate = path / ".jlm"
+        if candidate.exists():
+            return candidate.resolve()
+        prev = path
+        path = path.parent
+    raise KnownError("Cannot locate `.jlm` local directory")
 
 
 class BaseStore:
@@ -34,8 +46,19 @@ class HomeStore(BaseStore):
 
 
 class LocalStore(BaseStore):
-    def __init__(self, path):
-        self.path = Path(path)
+    @property
+    def path(self):
+        try:
+            return self._path
+        except AttributeError:
+            pass
+
+        self.path = locate_localstore()
+        return self._path
+
+    @path.setter
+    def path(self, value):
+        self._path = Path(value)
 
     def loaddata(self):
         datapath = self.path / "data.json"
