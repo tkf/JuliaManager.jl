@@ -1,5 +1,6 @@
 module JuliaManager
 
-greet() = print("Hello World!")
+include("SysImageHack/SysImageHack.jl")
+using .SysImageHack: compile_patched_sysimage
 
 end # module
