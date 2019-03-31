@@ -83,10 +83,41 @@ def make_parser(doc=__doc__):
     return parser
 
 
-def main(args=None):
+def preparse_run(args):
+    try:
+        stop = args.index("--")
+    except ValueError:
+        stop = len(args)
+    try:
+        irun = args.index("run", 0, stop) + 1
+    except ValueError:
+        return args, None
+
+    # Parse whatever after `run` _unless_ it looks like an option.
+    if irun < len(args) and not args[irun].startswith("-"):
+        irun += 1
+    if irun < len(args) and args[irun] == "--":
+        irun += 1
+
+    return args[:irun], args[irun:]
+
+
+def parse_args(args=None):
+    if args is None:
+        args = sys.argv[1:]
+    pre_args, julia_arguments = preparse_run(args)
     parser = make_parser()
-    ns = parser.parse_args(args)
-    kwargs = vars(ns)
+    ns = parser.parse_args(pre_args)
+    if julia_arguments:
+        assert not ns.arguments
+        ns.arguments = julia_arguments
+    if not hasattr(ns, "func"):
+        parser.error("please specify a subcommand or --help")
+    return ns
+
+
+def main(args=None):
+    kwargs = vars(parse_args())
     func = kwargs.pop("func")
     enable_pdb = kwargs.pop("pdb")
     app, kwargs = Application.consume(**kwargs)
