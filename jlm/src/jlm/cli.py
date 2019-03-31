@@ -20,15 +20,17 @@ It does:
 
 * Create a data store (`.jlm` directory).
 * Install `JuliaManager.jl` if it is not installed for `<julia>`.  [TODO]
-* Compile the (patched [#]_) default system image for `<julia>` if not
-  already found and `--sysimage|-J` is not given.  This can be done
-  separately by `jlm compile-default-sysimage`.
+* Compile the "patched" default system image (see note below) for
+  `<julia>` if not already found and `--sysimage|-J` is not given.
+  This can be done separately by `jlm compile-default-sysimage`.
 * Set the system image to be used for `<julia>`.  This can be re-done
   later by `set-sysimage`.
 
-.. [#] `jlm` compiles the system image with a patch that does
-   `Suggestion: Use different precompilation cache path for different
-   system image by tkf · Pull Request #29914 · JuliaLang/julia
+.. NOTE::
+
+   `jlm` compiles the system image with a patch that does `Suggestion:
+   Use different precompilation cache path for different system image
+   by tkf · Pull Request #29914 · JuliaLang/julia
    <https://github.com/JuliaLang/julia/pull/29914>`_
 """
 

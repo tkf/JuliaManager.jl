@@ -10,6 +10,12 @@ Welcome to jlm's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+.. default-role:: code
+
+.. argparse::
+   :module: jlm.cli
+   :func: make_parser
+   :prog: jlm
 
 
 Indices and tables
