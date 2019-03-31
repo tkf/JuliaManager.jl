@@ -34,6 +34,7 @@ def test_run(initialized):
             sys.executable,
             "-m",
             cli.__name__,
+            "--verbose",
             "run",
             "--startup-file=no",
             "-e",

@@ -84,13 +84,13 @@ class Application:
         return self.localstore.default_julia
 
     def julia_cmd(self):
-        cmd = [self.effective_julia]
+        cmd = [str(self.effective_julia)]
         cmd.extend(["--sysimage", str(self.effective_sysimage)])
         return cmd
 
     @property
     def precompile_key(self):
-        return self.effective_sysimage
+        return str(self.effective_sysimage)
 
     def compile_patched_sysimage(self, sysimage):
         code = """
@@ -116,6 +116,7 @@ class Application:
         self.rt.ensuredir(self.localstore.path)
 
     def cli_run(self, arguments):
+        assert all(isinstance(a, str) for a in arguments)
         env = os.environ.copy()
         env["JLM_PRECOMPILE_KEY"] = self.precompile_key
         cmd = self.julia_cmd()
