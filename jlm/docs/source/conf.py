@@ -80,7 +80,12 @@ html_theme = "alabaster"
 # documentation.
 #
 # https://alabaster.readthedocs.io/en/latest/customization.html
-html_theme_options = {"github_user": "tkf", "github_repo": "jlm", "fixed_sidebar": True}
+html_theme_options = {
+    "github_banner": True,
+    "github_user": "JuliaPy",
+    "github_repo": "pyjulia",
+    "fixed_sidebar": True,
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
