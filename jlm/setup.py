@@ -7,7 +7,7 @@ setup(
     package_dir={"": "src"},
     author="Takafumi Arakaki",
     author_email="aka.tkf@gmail.com",
-    # url="https://github.com/tkf/jlm",
+    url="https://github.com/tkf/JuliaManager.jl",
     license="MIT",  # SPDX short identifier
     # description="jlm - THIS DOES WHAT",
     long_description=open("README.rst").read(),
