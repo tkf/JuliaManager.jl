@@ -142,6 +142,15 @@ class Application:
 
     def cli_set_sysimage(self, sysimage):
         """ Set system image for `juila`. """
+
+        sysimage = Path(sysimage)
+        if not sysimage.is_absolute():
+            sysimage = Path.cwd() / sysimage
+            # Don't `.resolve()` here to avoid resolving symlinks.
+            # User may re-link sysimage and `jlm run` to use the new
+            # target.  It would be useful, e.g., when sysimage is
+            # stored in git-annex.
+
         self.localstore.set_sysimage(self.julia, sysimage)
 
     def cli_unset_sysimage(self):

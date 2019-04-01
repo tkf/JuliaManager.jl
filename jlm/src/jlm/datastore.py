@@ -94,7 +94,7 @@ class LocalStore(BaseStore):
 
     def set_sysimage(self, julia, sysimage):
         config = self.loaddata()["config"]
-        config["runtime"][julia] = sysimage
+        config["runtime"][julia] = str(sysimage)
         self.set(config)
 
     def unset_sysimage(self, julia):

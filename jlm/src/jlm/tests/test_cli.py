@@ -1,9 +1,11 @@
-import sys
+import os
 import subprocess
+import sys
 
 import pytest
 
 from .. import cli
+from ..utils import dlext
 
 
 def test_init(initialized):
@@ -41,4 +43,24 @@ def test_run(initialized):
             "Base.banner()",
         ]
     )
-    assert (initialized / ".jlm").is_dir()
+
+
+def test_relative_sysimage(initialized):
+    app = cli.Application(dry_run=False, verbose=True, julia="julia")
+
+    sysimage = initialized / "some" / "dir" / ("sys." + dlext)
+    sysimage.parent.mkdir(parents=True)
+    sysimage.symlink_to(app.default_sysimage(app.julia))
+
+    cli.run(["--verbose", "set-sysimage", str(sysimage.relative_to(initialized))])
+    test_run(initialized)
+    cli.run(["locate", "sysimage"])
+    print()
+
+    otherdir = initialized / "some" / "other" / "dir"
+    otherdir.mkdir(parents=True)
+    os.chdir(str(otherdir))
+
+    test_run(initialized)
+    cli.run(["locate", "sysimage"])
+    print()
