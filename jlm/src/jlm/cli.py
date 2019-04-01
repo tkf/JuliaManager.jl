@@ -87,7 +87,17 @@ def make_parser(doc=__doc__):
     p = subp("run", Application.cli_run, doc_run)
     p.add_argument("julia", default="julia", nargs="?", help=doc_julia)
     p.add_argument(
-        "arguments", nargs="*", help="Arguments and options passed to `julia`."
+        "arguments",
+        nargs="*",
+        help="""
+        Arguments and options passed to `julia`.  Non-option like
+        argument (i.e., the ones *not* starting with `-`) following
+        `run` is always interpreted as a Julia executable.  To pass a
+        file path to Julia, use `--` as the first argument to `run`;
+        i.e.  `jlm ... run -- PATH/TO/FILE.jl ...`.  If you pass
+        `julia` to `run`, there is no need to pass `--` since the
+        argument parsing for `jlm` automatically ends at this point.
+        """,
     )
 
     p = subp("init", Application.cli_init, doc_init)
