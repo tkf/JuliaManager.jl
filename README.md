@@ -1,6 +1,7 @@
 # JuliaManager.jl / `jlm`: System image manager for Julia
 
-[![Build Status](https://travis-ci.com/tkf/JuliaManager.jl.svg?branch=master)](https://travis-ci.com/tkf/JuliaManager.jl)
+[![Latest documentation][docs-dev-img]][docs-dev-url]
+[![Travis Status][travis-img]][travis-url]
 
 
 `jlm` is a command line interface to configure Julia's system image to
@@ -49,3 +50,9 @@ julia>
 ```
 
 See `jlm --help` for more information.
+
+
+[docs-dev-img]: https://img.shields.io/badge/docs-dev-blue.svg
+[docs-dev-url]: https://jlm.readthedocs.io/en/latest/
+[travis-img]: https://travis-ci.com/tkf/JuliaManager.jl.svg?branch=master
+[travis-url]: https://travis-ci.com/tkf/JuliaManager.jl
