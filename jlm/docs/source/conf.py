@@ -82,8 +82,8 @@ html_theme = "alabaster"
 # https://alabaster.readthedocs.io/en/latest/customization.html
 html_theme_options = {
     "github_banner": True,
-    "github_user": "JuliaPy",
-    "github_repo": "pyjulia",
+    "github_user": "tkf",
+    "github_repo": "JuliaManager.jl",
     "fixed_sidebar": True,
 }
 
