@@ -49,7 +49,8 @@ $ jlm run
 julia>
 ```
 
-See `jlm --help` for more information.
+See `jlm --help` or the [documentation][docs-dev-url] for more
+information.
 
 
 [docs-dev-img]: https://img.shields.io/badge/docs-dev-blue.svg
