@@ -1,6 +1,3 @@
-using JuliaManager
-using Test
-
-@testset "JuliaManager.jl" begin
-    # Write your own tests here.
+if lowercase(get(ENV, "CI", "false")) == "true"
+    include("destructive_tests.jl")
 end
