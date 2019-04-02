@@ -112,7 +112,11 @@ class LocalStore(BaseStore):
             raise AttributeError
 
     def sysimage(self, julia):
-        return self.loaddata()["config"]["runtime"].get(julia, None)
+        runtime = self.loaddata()["config"]["runtime"]
+        try:
+            return runtime[julia]["sysimage"]
+        except KeyError:
+            return None
 
     def set_sysimage(self, julia, sysimage):
         config = self.loaddata()["config"]
