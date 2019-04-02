@@ -105,7 +105,7 @@ class Application:
         using JuliaManager: compile_patched_sysimage
         compile_patched_sysimage(ARGS[1])
         """
-        self.rt.check_call([julia, "-e", code, str(sysimage)])
+        self.rt.check_call([julia, "--startup-file=no", "-e", code, str(sysimage)])
 
     def create_default_sysimage(self, julia):
         sysimage = self.default_sysimage(julia)
