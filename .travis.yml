@@ -12,6 +12,18 @@ addons:
     packages:
       - python3-pip
 matrix:
+  include:
+    - language: python
+      env:
+        - TOXENV=black
+      os: linux
+      python: "3.6"
+      before_script:
+        - pip --version
+        - pip install --quiet tox
+      script:
+        - cd jlm && tox
+      after_success: []
   allow_failures:
     - julia: nightly
   fast_finish: true
