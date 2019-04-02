@@ -28,7 +28,7 @@ def locate_localstore(path):
             return candidate.resolve()
         prev = path
         path = path.parent
-    raise KnownError("Cannot locate `.jlm` local directory")
+    return None
 
 
 class BaseStore:
@@ -47,6 +47,15 @@ class HomeStore(BaseStore):
 
 
 class LocalStore(BaseStore):
+    def locate_path(self):
+        return locate_localstore(Path.cwd())
+
+    def find_path(self):
+        path = self.locate_path()
+        if path is None:
+            raise KnownError("Cannot locate `.jlm` local directory")
+        return path
+
     @property
     def path(self):
         try:
@@ -54,16 +63,20 @@ class LocalStore(BaseStore):
         except AttributeError:
             pass
 
-        self.path = locate_localstore(Path.cwd())
+        self.path = self.find_path()
         return self._path
 
     @path.setter
     def path(self, value):
         self._path = Path(value)
 
+    def exists(self):
+        path = self.locate_path()
+        return path is not None and (path / "data.json").exists()
+
     def loaddata(self):
-        datapath = self.path / "data.json"
-        if datapath.exists():
+        if self.exists():
+            datapath = self.path / "data.json"
             with open(str(datapath)) as file:
                 return json.load(file)
         return {

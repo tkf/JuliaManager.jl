@@ -16,6 +16,7 @@ def test_init(initialized):
     "args",
     [
         ["create-default-sysimage"],
+        ["--dry-run", "create-default-sysimage", "--force"],
         ["set-default", "julia"],
         ["set-sysimage", "/dev/null"],
         ["unset-sysimage"],
@@ -27,6 +28,18 @@ def test_init(initialized):
     ],
 )
 def test_smoke(initialized, args):
+    cli.run(args)
+
+
+@pytest.mark.parametrize(
+    "args",
+    [
+        ["--dry-run", "create-default-sysimage"],
+        ["--dry-run", "create-default-sysimage", "--force"],
+        ["locate", "home-dir"],
+    ],
+)
+def test_smome_non_initialized(args):
     cli.run(args)
 
 
