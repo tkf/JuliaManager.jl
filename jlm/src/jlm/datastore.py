@@ -68,7 +68,10 @@ class LocalStore(BaseStore):
 
     @path.setter
     def path(self, value):
-        self._path = Path(value)
+        path = Path(value)
+        if not path.is_absolute():
+            raise ValueError("Not an absolute path:\n{}".format(path))
+        self._path = path
 
     def exists(self):
         path = self.locate_path()
