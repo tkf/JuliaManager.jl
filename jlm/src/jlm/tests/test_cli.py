@@ -5,7 +5,7 @@ import sys
 import pytest
 
 from .. import cli
-from ..utils import dlext
+from ..utils import dlext, pathstr
 
 
 def test_init(initialized):
@@ -65,14 +65,14 @@ def test_relative_sysimage(initialized):
     sysimage.parent.mkdir(parents=True)
     sysimage.symlink_to(app.default_sysimage(app.julia))
 
-    cli.run(["--verbose", "set-sysimage", str(sysimage.relative_to(initialized))])
+    cli.run(["--verbose", "set-sysimage", pathstr(sysimage.relative_to(initialized))])
     test_run(initialized)
     cli.run(["locate", "sysimage"])
     print()
 
     otherdir = initialized / "some" / "other" / "dir"
     otherdir.mkdir(parents=True)
-    os.chdir(str(otherdir))
+    os.chdir(pathstr(otherdir))
 
     test_run(initialized)
     cli.run(["locate", "sysimage"])

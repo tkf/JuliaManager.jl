@@ -6,7 +6,7 @@ from pathlib import Path
 from shutil import which
 
 from .datastore import HomeStore, LocalStore
-from .utils import KnownError, dlext
+from .utils import KnownError, dlext, pathstr
 
 
 class Runtime:
@@ -92,20 +92,20 @@ class Application:
         return julia
 
     def julia_cmd(self):
-        cmd = [str(self.effective_julia)]
-        cmd.extend(["--sysimage", str(self.effective_sysimage)])
+        cmd = [pathstr(self.effective_julia)]
+        cmd.extend(["--sysimage", pathstr(self.effective_sysimage)])
         return cmd
 
     @property
     def precompile_key(self):
-        return str(self.effective_sysimage)
+        return pathstr(self.effective_sysimage)
 
     def compile_patched_sysimage(self, julia, sysimage):
         code = """
         using JuliaManager: compile_patched_sysimage
         compile_patched_sysimage(ARGS[1])
         """
-        self.rt.check_call([julia, "--startup-file=no", "-e", code, str(sysimage)])
+        self.rt.check_call([julia, "--startup-file=no", "-e", code, pathstr(sysimage)])
 
     def create_default_sysimage(self, julia):
         sysimage = self.default_sysimage(julia)

@@ -5,14 +5,14 @@ from contextlib import contextmanager
 from pathlib import Path
 
 from . import __version__
-from .utils import KnownError
+from .utils import KnownError, pathstr
 
 
 @contextmanager
 def atomicopen(path, *args):
     tmppath = Path("{}.{}.tmp".format(path, os.getpid()))
     try:
-        with open(str(tmppath), *args) as file:
+        with open(pathstr(tmppath), *args) as file:
             yield file
         tmppath.rename(path)
     finally:
@@ -77,7 +77,7 @@ class LocalStore(BaseStore):
     def loaddata(self):
         if self.exists():
             datapath = self.path / "data.json"
-            with open(str(datapath)) as file:
+            with open(pathstr(datapath)) as file:
                 return json.load(file)
         return {
             "name": "jlm.LocalStore",
@@ -116,7 +116,7 @@ class LocalStore(BaseStore):
 
     def set_sysimage(self, julia, sysimage):
         config = self.loaddata()["config"]
-        config["runtime"][julia] = str(sysimage)
+        config["runtime"][julia] = pathstr(sysimage)
         self.set(config)
 
     def unset_sysimage(self, julia):
