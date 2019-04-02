@@ -33,6 +33,7 @@ def locate_localstore(path):
 
 class BaseStore:
     def execpath(self, julia):
+        assert Path(julia).is_absolute()
         m = hashlib.sha1(julia.encode("utf-8"))
         return self.path / "exec" / m.hexdigest()
 
@@ -79,15 +80,23 @@ class LocalStore(BaseStore):
         data = self.loaddata()
 
         if "default" in config:
+            assert isinstance(config["default"], str)
             data["config"]["default"] = config["default"]
         if "runtime" in config:
             data["config"]["runtime"].update(config["runtime"])
 
         self.storedata(data)
 
+    def has_default_julia(self):
+        return "default" in self.loaddata()["config"]
+
     @property
     def default_julia(self):
-        return self.loaddata()["config"]["default"]
+        config = self.loaddata()["config"]
+        try:
+            return config["default"]
+        except KeyError:
+            raise AttributeError
 
     def sysimage(self, julia):
         return self.loaddata()["config"]["runtime"].get(julia, None)

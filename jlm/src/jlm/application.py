@@ -54,6 +54,7 @@ class Application:
         return cls(dry_run, verbose, julia), kwargs
 
     def __init__(self, dry_run, verbose, julia):
+        # TODO: do not put `julia` in `self.juila`
         _julia = julia
         if julia is not None:
             _julia = which(julia)
@@ -81,7 +82,14 @@ class Application:
     def effective_julia(self):
         if self.julia is not None:
             return self.julia
-        return self.localstore.default_julia
+        try:
+            return self.localstore.default_julia
+        except AttributeError:
+            pass
+        julia = which("julia")
+        if julia is None:
+            raise KnownError("Julia executable `julia` is not found.")
+        return julia
 
     def julia_cmd(self):
         cmd = [str(self.effective_julia)]
@@ -92,24 +100,24 @@ class Application:
     def precompile_key(self):
         return str(self.effective_sysimage)
 
-    def compile_patched_sysimage(self, sysimage):
+    def compile_patched_sysimage(self, julia, sysimage):
         code = """
         using JuliaManager: compile_patched_sysimage
         compile_patched_sysimage(ARGS[1])
         """
-        self.rt.check_call([self.julia, "-e", code, str(sysimage)])
+        self.rt.check_call([julia, "-e", code, str(sysimage)])
 
-    def create_default_sysimage(self):
-        sysimage = self.default_sysimage(self.julia)
+    def create_default_sysimage(self, julia):
+        sysimage = self.default_sysimage(julia)
         self.rt.ensuredir(sysimage.parent)
-        self.compile_patched_sysimage(sysimage)
+        self.compile_patched_sysimage(julia, sysimage)
 
-    def ensure_default_sysimage(self):
-        sysimage = self.default_sysimage(self.julia)
+    def ensure_default_sysimage(self, julia):
+        sysimage = self.default_sysimage(julia)
         if sysimage.exists():
             self.rt.print("Default system image {} already exists.".format(sysimage))
             return
-        self.create_default_sysimage()
+        self.create_default_sysimage(julia)
 
     def initialize_localstore(self):
         self.localstore.path = Path.cwd() / ".jlm"
@@ -128,11 +136,15 @@ class Application:
 
     def cli_init(self, sysimage):
         self.initialize_localstore()
-        config = {"default": self.julia}
+        julia = self.julia
+        effective_julia = self.effective_julia  # `julia` or which("julia")
+        config = {}
+        if julia:
+            config["default"] = julia
         if sysimage:
-            config.update({"runtime": {self.julia: {"sysimage": sysimage}}})
+            config.update({"runtime": {effective_julia: {"sysimage": sysimage}}})
         else:
-            self.ensure_default_sysimage()
+            self.ensure_default_sysimage(effective_julia)
         if not self.dry_run:
             self.localstore.set(config)
 
@@ -159,10 +171,11 @@ class Application:
 
     def cli_create_default_sysimage(self, force):
         """ Compile default system image for `julia`. """
+        julia = self.effective_julia
         if force:
-            self.create_default_sysimage()
+            self.create_default_sysimage(julia)
         else:
-            self.ensure_default_sysimage()
+            self.ensure_default_sysimage(julia)
 
     def cli_locate_sysimage(self):
         """ Print system image that would be used for `julia`. """

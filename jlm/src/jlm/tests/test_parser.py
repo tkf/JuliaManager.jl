@@ -4,7 +4,7 @@ from ..cli import Application, parse_args
 
 
 def run_args(**kwargs):
-    return dict(dict(func=Application.cli_run, julia="julia", arguments=[]), **kwargs)
+    return dict(dict(func=Application.cli_run, julia=None, arguments=[]), **kwargs)
 
 
 @pytest.mark.parametrize(

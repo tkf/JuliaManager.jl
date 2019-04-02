@@ -85,7 +85,7 @@ def make_parser(doc=__doc__):
         return p
 
     p = subp("run", Application.cli_run, doc_run)
-    p.add_argument("julia", default="julia", nargs="?", help=doc_julia)
+    p.add_argument("julia", nargs="?", help=doc_julia)
     p.add_argument(
         "arguments",
         nargs="*",
@@ -104,21 +104,21 @@ def make_parser(doc=__doc__):
     )
 
     p = subp("init", Application.cli_init, doc_init)
-    p.add_argument("julia", default="julia", nargs="?", help=doc_julia)
+    p.add_argument("julia", nargs="?", help=doc_julia)
     p.add_argument("--sysimage", "-J", help=doc_sysimage)
 
     p = subp("set-default", Application.cli_set_default)
-    p.add_argument("julia", default="julia", help=doc_julia)
+    p.add_argument("julia", help=doc_julia)
 
     p = subp("set-sysimage", Application.cli_set_sysimage)
-    p.add_argument("julia", default="julia", nargs="?", help=doc_julia)
+    p.add_argument("julia", nargs="?", help=doc_julia)
     p.add_argument("sysimage", help=doc_sysimage)
 
     p = subp("unset-sysimage", Application.cli_unset_sysimage)
-    p.add_argument("julia", default="julia", nargs="?", help=doc_julia)
+    p.add_argument("julia", nargs="?", help=doc_julia)
 
     p = subp("create-default-sysimage", Application.cli_create_default_sysimage)
-    p.add_argument("julia", default="julia", nargs="?", help=doc_julia)
+    p.add_argument("julia", nargs="?", help=doc_julia)
     p.add_argument(
         "--force",
         "-f",
@@ -139,7 +139,7 @@ def make_parser(doc=__doc__):
     subparsers = locate_parser.add_subparsers()
 
     p = subp("sysimage", Application.cli_locate_sysimage)
-    p.add_argument("julia", default="julia", nargs="?", help=doc_julia)
+    p.add_argument("julia", nargs="?", help=doc_julia)
 
     p = subp("base", Application.cli_locate_base)
     p = subp("dir", Application.cli_locate_local_dir)
