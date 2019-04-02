@@ -2,8 +2,8 @@ import os
 import sys
 
 try:
-    from os import PathLike as Pathish
-except ImportError:
+    Pathish = (str, os.PathLike)
+except AttributeError:
     import pathlib
 
     Pathish = (str, pathlib.PurePath)
