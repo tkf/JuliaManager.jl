@@ -98,7 +98,13 @@ class Application:
 
     @property
     def precompile_key(self):
-        return pathstr(self.effective_sysimage)
+        """
+        Bytes ("salt") to be included for computing precompilation paths' slug.
+
+        See ``$JLM_PRECOMPILE_KEY`` in
+        ``../../../src/SysImageHack/scripts/patch.jl``.
+        """
+        return pathstr(self.localstore.path)
 
     def compile_patched_sysimage(self, julia, sysimage):
         code = """
