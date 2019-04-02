@@ -29,16 +29,3 @@ matrix:
   fast_finish: true
 notifications:
   email: false
-
-before_script:
-  - julia --color=yes -e '
-    using Pkg;
-    if VERSION >= v"1.1.0-rc1";
-        Pkg.build(verbose=true);
-    else
-        Pkg.build();
-    end'
-  - python3 -m pip install --user tox
-
-script:
-  - ci/test.sh
