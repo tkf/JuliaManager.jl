@@ -1,6 +1,18 @@
 import os
 import sys
-from pathlib import PurePath
+
+try:
+    from os import PathLike as Pathish
+except ImportError:
+    import pathlib
+
+    Pathish = (str, pathlib.PurePath)
+    try:
+        import pathlib2
+    except ImportError:
+        pass
+    else:
+        Pathish += (pathlib2.PurePath,)
 
 iswindows = os.name == "nt"
 isapple = sys.platform == "darwin"
@@ -15,7 +27,7 @@ else:
 
 
 def pathstr(path):
-    if not isinstance(path, (PurePath, str)):
+    if not isinstance(path, Pathish):
         raise ValueError("Not a path or a string:\n{!r}".format(path))
     return str(path)
 
