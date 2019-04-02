@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 
 from ..datastore import LocalStore
@@ -18,4 +20,8 @@ def test_non_abspath(cleancwd):
         store.path
 
     store.path = str(path)
-    assert store.path == path
+    assert not isinstance(store.path, str)
+    assert str(store.path) == str(path)
+    if isinstance(str, Path):
+        # may not be true in older Python/pytest
+        assert store.path == path
