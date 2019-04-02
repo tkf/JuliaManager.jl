@@ -7,6 +7,9 @@ version = "0.1.0"
 PackageCompiler = "9b87118b-4619-50d2-8e1e-99f35a4d4d9d"
 REPL = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 
+[compat]
+PackageCompiler = "≥ 0.6"
+
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
