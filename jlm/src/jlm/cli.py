@@ -69,6 +69,17 @@ def make_parser(doc=__doc__):
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--verbose", "-v", action="store_true")
     parser.add_argument("--pdb", action="store_true")
+    parser.add_argument(
+        "--jlm-dir",
+        metavar="PATH",
+        help="""
+        Specify the `.jlm` directory which is created by `jlm init`
+        and stores information for `jlm`.  By default, `.jlm`
+        directory found in the nearest "ancestor" directory is used.
+        Run `jlm locate dir` to locate the actual directory that would
+        be used.
+        """,
+    )
 
     subparsers = parser.add_subparsers()
 

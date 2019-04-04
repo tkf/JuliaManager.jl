@@ -1,22 +1,14 @@
-import os
-from pathlib import Path
-
 import pytest
 
 from .. import cli
-from ..utils import pathstr
+from .testing import changingdir
 
 
 @pytest.fixture
 def cleancwd(tmp_path):
-    oldcwd = Path.cwd()
     newcwd = tmp_path / "cleancwd"
-    newcwd.mkdir(exist_ok=True)
-    os.chdir(pathstr(newcwd))
-    try:
+    with changingdir(newcwd):
         yield newcwd
-    finally:
-        os.chdir(pathstr(oldcwd))
 
 
 @pytest.fixture

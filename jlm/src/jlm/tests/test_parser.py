@@ -39,7 +39,8 @@ def test_parse_args(args, included):
         ["--verbose"],
         ["-v"],
         ["--pdb"],
-        ["--dry-run", "--verbose", "--pdb"],
+        ["--jlm-dir=path"],
+        ["--dry-run", "--verbose", "--pdb", "--jlm-dir=path"],
     ],
 )
 def test_no_subcommand(capsys, args):

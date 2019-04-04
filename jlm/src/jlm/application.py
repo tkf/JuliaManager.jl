@@ -50,23 +50,25 @@ class Runtime:
 
 class Application:
     @classmethod
-    def consume(cls, dry_run, verbose, julia=None, **kwargs):
-        return cls(dry_run, verbose, julia), kwargs
+    def consume(cls, dry_run, verbose, julia=None, jlm_dir=None, **kwargs):
+        return cls(dry_run, verbose, julia, jlm_dir), kwargs
 
-    def __init__(self, dry_run, verbose, julia):
+    def __init__(self, dry_run, verbose, julia, jlm_dir=None):
         # TODO: do not put `julia` in `self.juila`
         _julia = julia
         if julia is not None:
             _julia = which(julia)
             if _julia is None:
                 raise KnownError("Julia executable {} is not found".format(julia))
+        if jlm_dir is not None:
+            jlm_dir = Path(jlm_dir).resolve()
 
         self.dry_run = dry_run
         self.verbose = verbose
         self.julia = _julia
         self.rt = Runtime(dry_run, verbose)
         self.homestore = HomeStore()
-        self.localstore = LocalStore()
+        self.localstore = LocalStore(jlm_dir)
 
     sysimage_name = "sys." + dlext
 

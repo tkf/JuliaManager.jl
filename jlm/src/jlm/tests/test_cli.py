@@ -5,7 +5,8 @@ import sys
 import pytest
 
 from .. import cli
-from ..utils import dlext, pathstr
+from ..utils import KnownError, dlext, pathstr
+from .testing import changingdir
 
 
 def test_init(initialized):
@@ -41,6 +42,19 @@ def test_smoke(initialized, args):
 )
 def test_smome_non_initialized(args):
     cli.run(args)
+
+
+def test_locate_fail_outside(initialized, tmp_path):
+    with changingdir(tmp_path / "different_dir"), pytest.raises(KnownError):
+        cli.run(["locate", "dir"])
+
+
+def test_locate_jlm_dir(initialized, tmp_path, capsys):
+    jlm_dir = str(initialized / ".jlm")
+    with changingdir(tmp_path / "different_dir"):
+        cli.run(["--jlm-dir", jlm_dir, "locate", "dir"])
+    captured = capsys.readouterr()
+    assert captured.out == jlm_dir
 
 
 def test_run(initialized):

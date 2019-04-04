@@ -51,6 +51,10 @@ class LocalStore(BaseStore):
     def locate_path():
         return locate_localstore(Path.cwd())
 
+    def __init__(self, path=None):
+        if path is not None:
+            self.path = path
+
     def find_path(self):
         path = self.locate_path()
         if path is None:
