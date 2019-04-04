@@ -47,7 +47,8 @@ class HomeStore(BaseStore):
 
 
 class LocalStore(BaseStore):
-    def locate_path(self):
+    @staticmethod
+    def locate_path():
         return locate_localstore(Path.cwd())
 
     def find_path(self):
