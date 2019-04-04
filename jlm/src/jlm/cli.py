@@ -189,8 +189,13 @@ def parse_args(args=None):
     if julia_arguments:
         assert not ns.arguments
         ns.arguments = julia_arguments
+
     if not hasattr(ns, "func"):
         parser.error("please specify a subcommand or --help")
+
+    if ns.func == Application.cli_init and ns.jlm_dir is not None:
+        parser.error("`jlm init` does not support --jlm-dir")
+
     return ns
 
 

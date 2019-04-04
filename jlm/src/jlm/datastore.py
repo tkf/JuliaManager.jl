@@ -5,7 +5,7 @@ from contextlib import contextmanager
 from pathlib import Path
 
 from . import __version__
-from .utils import KnownError, pathstr
+from .utils import KnownError, Pathish, pathstr
 
 
 @contextmanager
@@ -51,8 +51,23 @@ class LocalStore(BaseStore):
     def locate_path():
         return locate_localstore(Path.cwd())
 
+    @staticmethod
+    def is_valid_path(path):
+        path = Path(path)
+        return (path / "data.json").exists()
+
     def __init__(self, path=None):
         if path is not None:
+            if not isinstance(path, Pathish):
+                raise TypeError(
+                    (
+                        "`path` argument for `LocalStore(path)` must be a"
+                        "`str` or `Path`, not {}"
+                    ).format(type(path))
+                )
+            path = Path(path)
+            if not self.is_valid_path(path):
+                raise KnownError("{} is not a valid `.jlm` directory.".format(path))
             self.path = path
 
     def find_path(self):

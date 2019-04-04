@@ -60,13 +60,27 @@ class Application:
             _julia = which(julia)
             if _julia is None:
                 raise KnownError("Julia executable {} is not found".format(julia))
-        if jlm_dir is not None:
-            jlm_dir = Path(jlm_dir).resolve()
 
         self.dry_run = dry_run
         self.verbose = verbose
         self.julia = _julia
         self.rt = Runtime(dry_run, verbose)
+
+        if jlm_dir is not None:
+            jlm_dir = Path(jlm_dir)
+            if LocalStore.is_valid_path(jlm_dir):
+                jlm_dir = jlm_dir.resolve()
+            else:
+                possible = jlm_dir / ".jlm"
+                if possible.exists():
+                    self.rt.warn(
+                        (
+                            "{jlm_dir} is not a valid path for --jlm-dir.  "
+                            "Do you forget to append `.jlm`?  Possible fix:\n"
+                            "    --jlm-dir {possible}"
+                        ).format(jlm_dir=jlm_dir, possible=possible)
+                    )
+
         self.homestore = HomeStore()
         self.localstore = LocalStore(jlm_dir)
 

@@ -57,6 +57,18 @@ def test_locate_jlm_dir(initialized, tmp_path, capsys):
     assert captured.out == jlm_dir
 
 
+@pytest.mark.parametrize("is_base", [False, True])
+def test_locate_fail_non_jlm_dir(initialized, tmp_path, capsys, is_base):
+    jlm_dir = str(initialized if is_base else tmp_path / "another")
+    with changingdir(tmp_path / "different_dir"), pytest.raises(KnownError) as exc_info:
+        cli.run(["--jlm-dir", jlm_dir, "locate", "dir"])
+    captured = capsys.readouterr()
+    assert not captured.out
+    if is_base:
+        assert "Possible fix:" in captured.err
+    assert "is not a valid `.jlm` directory" in str(exc_info.value)
+
+
 def test_run(initialized):
     subprocess.check_call(
         [
