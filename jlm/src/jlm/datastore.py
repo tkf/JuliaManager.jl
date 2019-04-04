@@ -48,10 +48,6 @@ class HomeStore(BaseStore):
 
 class LocalStore(BaseStore):
     @staticmethod
-    def locate_path():
-        return locate_localstore(Path.cwd())
-
-    @staticmethod
     def is_valid_path(path):
         path = Path(path)
         return (path / "data.json").exists()
@@ -69,6 +65,12 @@ class LocalStore(BaseStore):
             if not self.is_valid_path(path):
                 raise KnownError("{} is not a valid `.jlm` directory.".format(path))
             self.path = path
+
+    def locate_path(self):
+        try:
+            return self._path
+        except AttributeError:
+            return locate_localstore(Path.cwd())
 
     def find_path(self):
         path = self.locate_path()
@@ -142,8 +144,9 @@ class LocalStore(BaseStore):
             return None
 
     def set_sysimage(self, julia, sysimage):
+        assert isinstance(julia, str)
         config = self.loaddata()["config"]
-        config["runtime"][julia] = pathstr(sysimage)
+        config["runtime"][julia] = {"sysimage": pathstr(sysimage)}
         self.set(config)
 
     def unset_sysimage(self, julia):

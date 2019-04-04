@@ -69,6 +69,32 @@ def test_locate_fail_non_jlm_dir(initialized, tmp_path, capsys, is_base):
     assert "is not a valid `.jlm` directory" in str(exc_info.value)
 
 
+def test_jlm_dir_locate_sysimage(initialized, tmp_path, capsys):
+    sysimage = str(tmp_path / "dummy-sys.so")
+    cli.run(["set-sysimage", sysimage])
+    capsys.readouterr()
+
+    jlm_dir = str(initialized / ".jlm")
+    with changingdir(tmp_path / "different_dir"):
+        cli.run(["--jlm-dir", jlm_dir, "locate", "sysimage"])
+
+    captured = capsys.readouterr()
+    assert captured.out == sysimage
+
+
+def test_jlm_dir_dry_run(initialized, tmp_path, capsys):
+    sysimage = str(tmp_path / "dummy-sys.so")
+    cli.run(["set-sysimage", sysimage])
+    capsys.readouterr()
+
+    jlm_dir = str(initialized / ".jlm")
+    with changingdir(tmp_path / "different_dir"):
+        cli.run(["--jlm-dir", jlm_dir, "--dry-run", "run"])
+
+    captured = capsys.readouterr()
+    assert sysimage in captured.out
+
+
 def test_run(initialized):
     subprocess.check_call(
         [

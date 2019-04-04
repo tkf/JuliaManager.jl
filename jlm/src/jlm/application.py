@@ -2,6 +2,7 @@ import os
 import shlex
 import subprocess
 import sys
+import textwrap
 from pathlib import Path
 from shutil import which
 
@@ -185,7 +186,25 @@ class Application:
             # target.  It would be useful, e.g., when sysimage is
             # stored in git-annex.
 
-        self.localstore.set_sysimage(self.julia, sysimage)
+        # In case --julia is not specified, it is probably better to
+        # resolve Julia executable at this point rather than to use
+        # whatever `julia` on the `$PATH` sometime later at run-time.
+        julia = self.effective_julia
+
+        self.localstore.set_sysimage(julia, sysimage)
+
+        self.rt.print(
+            textwrap.dedent(
+                """
+                System image is set to:
+                    {}
+                for Julia executable:
+                    {}
+                """.format(
+                    sysimage, julia
+                )
+            )
+        )
 
     def cli_unset_sysimage(self):
         """ Unset system image for `juila`. """
