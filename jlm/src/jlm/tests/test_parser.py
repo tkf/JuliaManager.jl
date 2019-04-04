@@ -29,3 +29,22 @@ def test_parse_args(args, included):
     ns = parse_args(args)
     actual = {k: v for (k, v) in vars(ns).items() if k in included}
     assert actual == included
+
+
+@pytest.mark.parametrize(
+    "args",
+    [
+        [],
+        ["--dry-run"],
+        ["--verbose"],
+        ["-v"],
+        ["--pdb"],
+        ["--dry-run", "--verbose", "--pdb"],
+    ],
+)
+def test_no_subcommand(capsys, args):
+    with pytest.raises(SystemExit):
+        parse_args(args)
+    captured = capsys.readouterr()
+    assert not captured.out
+    assert "please specify a subcommand or --help" in captured.err
