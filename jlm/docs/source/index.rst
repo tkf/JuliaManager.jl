@@ -6,7 +6,7 @@ Installation
 
 .. code-block:: jlcon
 
-   (v1.1) pkg> add https://github.com/tkf/JuliaManager.jl
+   (v1.1) pkg> add JuliaManager
    ...
 
    julia> using JuliaManager

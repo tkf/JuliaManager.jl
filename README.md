@@ -18,7 +18,7 @@ not modified by `jlm`.
 ## Quick usage
 
 ```julia
-(v1.2) pkg> add https://github.com/tkf/JuliaManager.jl
+(v1.2) pkg> add JuliaManager
 ...
 
 julia> using JuliaManager
