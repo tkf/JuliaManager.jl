@@ -1,5 +1,6 @@
 # JuliaManager.jl / `jlm`: System image manager for Julia
 
+[![Stable documentation][docs-stable-img]][docs-stable-url]
 [![Latest documentation][docs-dev-img]][docs-dev-url]
 [![Travis Status][travis-img]][travis-url]
 
@@ -53,6 +54,8 @@ See `jlm --help` or the [documentation][docs-dev-url] for more
 information.
 
 
+[docs-stable-img]: https://img.shields.io/badge/docs-stable-blue.svg
+[docs-stable-url]: https://jlm.readthedocs.io/en/stable/
 [docs-dev-img]: https://img.shields.io/badge/docs-dev-blue.svg
 [docs-dev-url]: https://jlm.readthedocs.io/en/latest/
 [travis-img]: https://travis-ci.com/tkf/JuliaManager.jl.svg?branch=master
