@@ -49,9 +49,10 @@ Using MKL.jl-patched Julia and standard Julia side-by-side
 `MKL.jl`_ is a convenient way of using Intel's Math Kernel Library
 (MKL) with Julia.  However, it still has some caveats and difficult to
 use standard Julia installation since precompilation cache are shared.
-This problem can be avoided by ``jlm`` so that switching between
-MKL.jl and non-MKL.jl Julia can be used in simultaneously without
-invoking repeated precompilation.
+This problem can be avoided by using ``jlm`` to separate compilation
+cache paths for MKL.jl and non-MKL.jl Julia.  This way, both Julia
+installations can be used simultaneously without invoking repeated
+precompilation.
 
 .. _`MKL.jl`: https://github.com/JuliaComputing/MKL.jl
 
