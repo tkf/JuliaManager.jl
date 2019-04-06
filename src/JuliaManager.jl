@@ -1,6 +1,6 @@
 module JuliaManager
 
-const version = v"0.1.1-DEV"
+const version = v"0.1.1"
 # This could be useful for checking frontend-backend compatibility.
 
 include("SysImageHack/SysImageHack.jl")

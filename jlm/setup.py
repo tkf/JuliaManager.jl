@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="jlm",
-    version="0.1.1-DEV",
+    version="0.1.1",
     packages=find_packages("src"),
     package_dir={"": "src"},
     author="Takafumi Arakaki",
