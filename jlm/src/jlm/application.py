@@ -7,7 +7,7 @@ from pathlib import Path
 from shutil import which
 
 from .datastore import HomeStore, LocalStore
-from .utils import KnownError, dlext, pathstr
+from .utils import ApplicationError, dlext, pathstr
 
 
 class SideEffect:
@@ -60,7 +60,7 @@ class Application:
         if julia is not None:
             _julia = which(julia)
             if _julia is None:
-                raise KnownError("Julia executable {} is not found".format(julia))
+                raise ApplicationError("Julia executable {} is not found".format(julia))
 
         self.dry_run = dry_run
         self.verbose = verbose
@@ -107,7 +107,7 @@ class Application:
             pass
         julia = which("julia")
         if julia is None:
-            raise KnownError("Julia executable `julia` is not found.")
+            raise ApplicationError("Julia executable `julia` is not found.")
         return julia
 
     def julia_cmd(self):
@@ -133,7 +133,7 @@ class Application:
         try:
             self.eff.check_call([julia, "--startup-file=no", "--color=yes", "-e", code])
         except subprocess.CalledProcessError:
-            raise KnownError("Failed to update JuliaManager.jl")
+            raise ApplicationError("Failed to update JuliaManager.jl")
 
     def install_backend(self, julia):
         code = """
@@ -152,7 +152,7 @@ class Application:
         try:
             self.eff.check_call([julia, "--startup-file=no", "--color=yes", "-e", code])
         except subprocess.CalledProcessError:
-            raise KnownError("Failed to install JuliaManager.jl")
+            raise ApplicationError("Failed to install JuliaManager.jl")
 
     def compile_patched_sysimage(self, julia, sysimage):
         code = """

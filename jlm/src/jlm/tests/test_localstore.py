@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 
 from ..datastore import LocalStore
-from ..utils import KnownError
+from ..utils import ApplicationError
 
 
 def test_non_abspath(cleancwd):
@@ -16,7 +16,7 @@ def test_non_abspath(cleancwd):
         store.path = str(path.relative_to(cleancwd))
 
     # Should it be an AttributeError?
-    with pytest.raises(KnownError):
+    with pytest.raises(ApplicationError):
         store.path
 
     store.path = str(path)

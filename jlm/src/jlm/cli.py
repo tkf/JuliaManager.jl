@@ -8,7 +8,7 @@ import sys
 import textwrap
 
 from .application import Application
-from .utils import KnownError
+from .utils import ApplicationError
 
 doc_run = """
 Run `julia` executable with appropriate system image.
@@ -227,7 +227,7 @@ def run(args):
 def main(args=None):
     try:
         run(args)
-    except (KnownError, subprocess.CalledProcessError) as err:
+    except (ApplicationError, subprocess.CalledProcessError) as err:
         print(err, file=sys.stderr)
         sys.exit(1)
 

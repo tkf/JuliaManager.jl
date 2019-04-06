@@ -7,7 +7,7 @@ from shutil import which
 
 from . import __version__
 from .runtime import JuliaRuntime
-from .utils import KnownError, Pathish, pathstr
+from .utils import ApplicationError, Pathish, pathstr
 
 
 @contextmanager
@@ -65,7 +65,9 @@ class LocalStore(BaseStore):
                 )
             path = Path(path)
             if not self.is_valid_path(path):
-                raise KnownError("{} is not a valid `.jlm` directory.".format(path))
+                raise ApplicationError(
+                    "{} is not a valid `.jlm` directory.".format(path)
+                )
             self.path = path
 
     def locate_path(self):
@@ -77,7 +79,7 @@ class LocalStore(BaseStore):
     def find_path(self):
         path = self.locate_path()
         if path is None:
-            raise KnownError("Cannot locate `.jlm` local directory")
+            raise ApplicationError("Cannot locate `.jlm` local directory")
         return path
 
     @property

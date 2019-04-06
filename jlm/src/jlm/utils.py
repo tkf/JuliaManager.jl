@@ -32,5 +32,5 @@ def pathstr(path):
     return str(path)
 
 
-class KnownError(RuntimeError):
+class ApplicationError(RuntimeError):
     pass
