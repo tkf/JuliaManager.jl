@@ -148,6 +148,8 @@ def make_parser(doc=__doc__):
     p = subp("update-backend", Application.cli_update_backend)
     p.add_argument("julia", nargs="?", help=doc_julia)
 
+    p = subp("info", Application.cli_info)
+
     locate_parser = subparsers.add_parser(
         "locate",
         formatter_class=FormatterClass,

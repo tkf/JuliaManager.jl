@@ -20,7 +20,7 @@ class SideEffect:
         self.verbose = verbose
         self._verbose = dry_run or verbose
 
-    def print(self, message):
+    def print(self, message=""):
         print(message)
         # TODO: hide when "quiet"
 
@@ -90,10 +90,12 @@ class Application:
     def default_sysimage(self, julia):
         return self.homestore.execpath(julia) / self.sysimage_name
 
+    def sysimage_for(self, julia):
+        return self.localstore.sysimage(julia) or self.default_sysimage(julia)
+
     @property
     def effective_sysimage(self):
-        julia = self.effective_julia
-        return self.localstore.sysimage(julia) or self.default_sysimage(julia)
+        return self.sysimage_for(self.effective_julia)
 
     @property
     def effective_julia(self):
@@ -186,6 +188,10 @@ class Application:
         self.localstore.path = Path.cwd() / ".jlm"
         self.eff.ensuredir(self.localstore.path)
 
+    def available_runtimes(self):
+        default, others = self.localstore.available_runtimes()
+        return default.resolve(self), [runtime.resolve(self) for runtime in others]
+
     def cli_run(self, arguments):
         assert all(isinstance(a, str) for a in arguments)
         env = os.environ.copy()
@@ -260,6 +266,22 @@ class Application:
     def cli_update_backend(self):
         """ Update JuliaManager.jl for this `julia`. """
         self.update_backend(self.effective_julia)
+
+    def cli_info(self):
+        """ Print information about jlm setup. """
+        default, others = self.available_runtimes()
+        print = self.eff.print
+        print()
+        print("`.jlm` directory:")
+        print(self.localstore.path)
+        print()
+        print("Default Julia runtime:")
+        print(default.summary())
+        if others:
+            print()
+            print("Other runtime(s):")
+            for runtime in others:
+                print(runtime.summary())
 
     def cli_locate_sysimage(self):
         """ Print system image that would be used for `julia`. """

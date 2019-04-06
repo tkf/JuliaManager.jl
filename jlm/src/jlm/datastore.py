@@ -3,8 +3,10 @@ import json
 import os
 from contextlib import contextmanager
 from pathlib import Path
+from shutil import which
 
 from . import __version__
+from .runtime import JuliaRuntime
 from .utils import KnownError, Pathish, pathstr
 
 
@@ -153,3 +155,18 @@ class LocalStore(BaseStore):
         data = self.loaddata()
         data["config"]["runtime"].pop(julia, None)
         self.storedata(data)
+
+    def available_runtimes(self):
+        config = self.loaddata()["config"]
+        try:
+            julia = config["default"]
+        except KeyError:
+            julia = which("julia")
+        default = JuliaRuntime(julia, self.sysimage(julia))
+
+        others = []
+        for (julia, runtime) in config["runtime"].items():
+            if julia != default.executable:
+                others.append(JuliaRuntime(julia, runtime["sysimage"]))
+
+        return default, others
