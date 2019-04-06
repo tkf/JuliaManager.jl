@@ -6,9 +6,11 @@ import argparse
 import subprocess
 import sys
 import textwrap
+from pathlib import Path
 
 from .application import Application
 from .utils import ApplicationError
+from . import __version__
 
 doc_run = """
 Run `julia` executable with appropriate system image.
@@ -66,6 +68,14 @@ class FormatterClass(
 def make_parser(doc=__doc__):
     parser = argparse.ArgumentParser(formatter_class=FormatterClass, description=doc)
 
+    pyversion = "{0.major}.{0.minor}.{0.micro}".format(sys.version_info)
+    parser.add_argument(
+        "--version",
+        action="version",
+        version="%(prog)s {} from {} ({} {})".format(
+            __version__, Path(__file__).absolute().parent, sys.executable, pyversion
+        ),
+    )
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--verbose", "-v", action="store_true")
     parser.add_argument("--pdb", action="store_true")
