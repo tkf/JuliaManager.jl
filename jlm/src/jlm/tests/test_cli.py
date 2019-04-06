@@ -16,11 +16,13 @@ def test_init(initialized):
 @pytest.mark.parametrize(
     "args",
     [
+        ["install-backend"],
         ["create-default-sysimage"],
         ["--dry-run", "create-default-sysimage", "--force"],
         ["set-default", "julia"],
         ["set-sysimage", "/dev/null"],
         ["unset-sysimage"],
+        ["info"],
         ["locate", "sysimage"],
         ["locate", "sysimage", "julia"],
         ["locate", "base"],
