@@ -270,11 +270,13 @@ class Application:
 
     def cli_info(self):
         """ Print information about jlm setup. """
+        path = self.localstore.path
         default, others = self.available_runtimes()
+
         print = self.eff.print
         print()
         print("`.jlm` directory:")
-        print(self.localstore.path)
+        print(path)
         print()
         print("Default Julia runtime:")
         print(default.summary())
