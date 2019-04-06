@@ -10,7 +10,7 @@ from .datastore import HomeStore, LocalStore
 from .utils import KnownError, dlext, pathstr
 
 
-class Runtime:
+class SideEffect:
     @classmethod
     def consume(cls, dry_run, verbose, **kwargs):
         return cls(dry_run, verbose), kwargs
@@ -65,7 +65,7 @@ class Application:
         self.dry_run = dry_run
         self.verbose = verbose
         self.julia = _julia
-        self.rt = Runtime(dry_run, verbose)
+        self.eff = SideEffect(dry_run, verbose)
 
         if jlm_dir is not None:
             jlm_dir = Path(jlm_dir)
@@ -74,7 +74,7 @@ class Application:
             else:
                 possible = jlm_dir / ".jlm"
                 if possible.exists():
-                    self.rt.warn(
+                    self.eff.warn(
                         (
                             "{jlm_dir} is not a valid path for --jlm-dir.  "
                             "Do you forget to append `.jlm`?  Possible fix:\n"
@@ -129,7 +129,7 @@ class Application:
         Pkg.add("JuliaManager")
         """
         try:
-            self.rt.check_call([julia, "--startup-file=no", "--color=yes", "-e", code])
+            self.eff.check_call([julia, "--startup-file=no", "--color=yes", "-e", code])
         except subprocess.CalledProcessError:
             raise KnownError("Failed to update JuliaManager.jl")
 
@@ -148,7 +148,7 @@ class Application:
         end
         """
         try:
-            self.rt.check_call([julia, "--startup-file=no", "--color=yes", "-e", code])
+            self.eff.check_call([julia, "--startup-file=no", "--color=yes", "-e", code])
         except subprocess.CalledProcessError:
             raise KnownError("Failed to install JuliaManager.jl")
 
@@ -157,18 +157,18 @@ class Application:
         using JuliaManager: compile_patched_sysimage
         compile_patched_sysimage(ARGS[1])
         """
-        self.rt.check_call([julia, "--startup-file=no", "-e", code, pathstr(sysimage)])
+        self.eff.check_call([julia, "--startup-file=no", "-e", code, pathstr(sysimage)])
 
     def create_default_sysimage(self, julia):
         sysimage = self.default_sysimage(julia)
-        self.rt.ensuredir(sysimage.parent)
+        self.eff.ensuredir(sysimage.parent)
         self.compile_patched_sysimage(julia, sysimage)
 
     def ensure_default_sysimage(self, julia):
         self.install_backend(julia)
         sysimage = self.default_sysimage(julia)
         if sysimage.exists():
-            self.rt.print("Default system image {} already exists.".format(sysimage))
+            self.eff.print("Default system image {} already exists.".format(sysimage))
             return
         self.create_default_sysimage(julia)
 
@@ -184,7 +184,7 @@ class Application:
 
     def initialize_localstore(self):
         self.localstore.path = Path.cwd() / ".jlm"
-        self.rt.ensuredir(self.localstore.path)
+        self.eff.ensuredir(self.localstore.path)
 
     def cli_run(self, arguments):
         assert all(isinstance(a, str) for a in arguments)
@@ -192,7 +192,7 @@ class Application:
         env["JLM_PRECOMPILE_KEY"] = self.precompile_key
         cmd = self.julia_cmd()
         cmd.extend(arguments)
-        self.rt.info_run(cmd)
+        self.eff.info_run(cmd)
         if self.dry_run:
             return
         os.execvpe(cmd[0], cmd, env)
@@ -228,7 +228,7 @@ class Application:
 
         self.localstore.set_sysimage(julia, sysimage)
 
-        self.rt.print(
+        self.eff.print(
             textwrap.dedent(
                 """
                 System image is set to:
