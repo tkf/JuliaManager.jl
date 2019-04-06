@@ -249,7 +249,8 @@ class Application:
 
     def cli_unset_sysimage(self):
         """ Unset system image for `juila`. """
-        self.localstore.unset_sysimage(self.julia)
+        julia = self.effective_julia
+        self.localstore.unset_sysimage(julia)
 
     def cli_create_default_sysimage(self, force):
         """ Compile default system image for `julia`. """

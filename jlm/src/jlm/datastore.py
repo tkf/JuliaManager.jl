@@ -152,6 +152,8 @@ class LocalStore(BaseStore):
         self.set(config)
 
     def unset_sysimage(self, julia):
+        if not isinstance(julia, str):
+            raise TypeError("`julia` must be a `str`, got: {!r}".format(julia))
         data = self.loaddata()
         data["config"]["runtime"].pop(julia, None)
         self.storedata(data)
