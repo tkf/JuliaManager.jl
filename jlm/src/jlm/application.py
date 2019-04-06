@@ -142,6 +142,16 @@ class Application:
             return
         self.create_default_sysimage(julia)
 
+    def normalize_sysimage(self, sysimage):
+        sysimage = Path(sysimage)
+        if not sysimage.is_absolute():
+            sysimage = Path.cwd() / sysimage
+            # Don't `.resolve()` here to avoid resolving symlinks.
+            # User may re-link sysimage and `jlm run` to use the new
+            # target.  It would be useful, e.g., when sysimage is
+            # stored in git-annex.
+        return pathstr(sysimage)
+
     def initialize_localstore(self):
         self.localstore.path = Path.cwd() / ".jlm"
         self.rt.ensuredir(self.localstore.path)
@@ -165,6 +175,7 @@ class Application:
         if julia:
             config["default"] = julia
         if sysimage:
+            sysimage = self.normalize_sysimage(sysimage)
             config.update({"runtime": {effective_julia: {"sysimage": sysimage}}})
         else:
             self.ensure_default_sysimage(effective_julia)
@@ -178,13 +189,7 @@ class Application:
     def cli_set_sysimage(self, sysimage):
         """ Set system image for `juila`. """
 
-        sysimage = Path(sysimage)
-        if not sysimage.is_absolute():
-            sysimage = Path.cwd() / sysimage
-            # Don't `.resolve()` here to avoid resolving symlinks.
-            # User may re-link sysimage and `jlm run` to use the new
-            # target.  It would be useful, e.g., when sysimage is
-            # stored in git-annex.
+        sysimage = self.normalize_sysimage(sysimage)
 
         # In case --julia is not specified, it is probably better to
         # resolve Julia executable at this point rather than to use
