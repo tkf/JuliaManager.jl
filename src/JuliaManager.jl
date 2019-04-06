@@ -1,5 +1,8 @@
 module JuliaManager
 
+const version = v"0.1.1-DEV"
+# This could be useful for checking frontend-backend compatibility.
+
 include("SysImageHack/SysImageHack.jl")
 using .SysImageHack: compile_patched_sysimage
 
