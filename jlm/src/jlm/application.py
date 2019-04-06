@@ -123,6 +123,35 @@ class Application:
         """
         return pathstr(self.localstore.path)
 
+    def update_backend(self, julia):
+        code = """
+        using Pkg
+        Pkg.add("JuliaManager")
+        """
+        try:
+            self.rt.check_call([julia, "--startup-file=no", "--color=yes", "-e", code])
+        except subprocess.CalledProcessError:
+            raise KnownError("Failed to update JuliaManager.jl")
+
+    def install_backend(self, julia):
+        code = """
+        pkg = Base.PkgId(
+            Base.UUID("0cdbb3b1-e653-5045-b8d5-b31a04c2a6c9"),
+            "JuliaManager",
+        )
+        if Base.locate_package(pkg) === nothing
+            @info "JuliaManager.jl is not found. Installing..."
+            using Pkg
+            Pkg.add("JuliaManager")
+        else
+            @info "JuliaManager.jl is already installed"
+        end
+        """
+        try:
+            self.rt.check_call([julia, "--startup-file=no", "--color=yes", "-e", code])
+        except subprocess.CalledProcessError:
+            raise KnownError("Failed to install JuliaManager.jl")
+
     def compile_patched_sysimage(self, julia, sysimage):
         code = """
         using JuliaManager: compile_patched_sysimage
@@ -136,6 +165,7 @@ class Application:
         self.compile_patched_sysimage(julia, sysimage)
 
     def ensure_default_sysimage(self, julia):
+        self.install_backend(julia)
         sysimage = self.default_sysimage(julia)
         if sysimage.exists():
             self.rt.print("Default system image {} already exists.".format(sysimage))
@@ -222,6 +252,14 @@ class Application:
             self.create_default_sysimage(julia)
         else:
             self.ensure_default_sysimage(julia)
+
+    def cli_install_backend(self):
+        """ Install JuliaManager.jl for this `julia`. """
+        self.install_backend(self.effective_julia)
+
+    def cli_update_backend(self):
+        """ Update JuliaManager.jl for this `julia`. """
+        self.update_backend(self.effective_julia)
 
     def cli_locate_sysimage(self):
         """ Print system image that would be used for `julia`. """

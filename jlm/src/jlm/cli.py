@@ -23,7 +23,7 @@ Initialize `jlm`.
 `jlm init` does:
 
 * Create a data store (`.jlm` directory).
-* Install `JuliaManager.jl` if it is not installed for `<julia>`.  [TODO]
+* Install `JuliaManager.jl` if it is not installed for `<julia>`.
 * Compile the "patched" default system image (see note below) for
   `<julia>` if not already found and `--sysimage|-J` is not given.
   This can be done separately by `jlm compile-default-sysimage`.
@@ -141,6 +141,12 @@ def make_parser(doc=__doc__):
             """
         ),
     )
+
+    p = subp("install-backend", Application.cli_install_backend)
+    p.add_argument("julia", nargs="?", help=doc_julia)
+
+    p = subp("update-backend", Application.cli_update_backend)
+    p.add_argument("julia", nargs="?", help=doc_julia)
 
     locate_parser = subparsers.add_parser(
         "locate",
