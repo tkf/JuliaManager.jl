@@ -9,17 +9,19 @@ using .SysImageHack: compile_patched_sysimage
 bundled_jlm() = joinpath(dirname(@__DIR__), "jlm", "jlm")
 
 """
-    JuliaManager.install_cli([destdir = "~/.julia/bin"])
+    JuliaManager.install_cli([destdir = "~/.julia/bin"]; upgrade)
 
 Install `jlm` CLI at `destdir`.
 """
-function install_cli(destdir=joinpath(homedir(), ".julia", "bin"))
+function install_cli(destdir = joinpath(homedir(), ".julia", "bin");
+                     upgrade = false)
     destpath = joinpath(destdir, "jlm")
-    if isfile(destpath)
+    if isfile(destpath) && !upgrade
         @info "CLI `jlm` is already installed at $destpath"
     else
         @info "Installing CLI `jlm` at $destpath"
         mkpath(destdir)
+        rm(destpath, force=true)
         symlink(bundled_jlm(), destpath)
     end
 
@@ -35,6 +37,12 @@ function install_cli(destdir=joinpath(homedir(), ".julia", "bin"))
         Program that is installed:
             $destpath
         """
+        if !upgrade
+            @info """
+            Upgrading CLI with `JuliaManager.install_cli(upgrade=true)` may fix
+            the issue.
+            """
+        end
     end
 
     return

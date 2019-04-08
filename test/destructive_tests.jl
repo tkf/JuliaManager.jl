@@ -23,6 +23,10 @@ if Sys.which("jlm") === nothing
 
     @test JuliaManager.install_cli(destdir) === nothing
     @assert Sys.which("jlm") !== nothing  # abort test
+
+    # At this point `install_cli` should be a no-op
+    @test JuliaManager.install_cli(destdir) === nothing
+    @test JuliaManager.install_cli(destdir; upgrade=true) === nothing
 end
 
 @show Sys.which("jlm")
