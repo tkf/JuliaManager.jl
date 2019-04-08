@@ -4,6 +4,9 @@
 Installation
 ------------
 
+Using Julia's package manager
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 .. code-block:: jlcon
 
    (v1.1) pkg> add JuliaManager
@@ -16,6 +19,19 @@ Installation
 
 You need to add `~/.julia/bin` to `$PATH` as would be messaged if it
 not.
+
+**Note**: This doesn't work in Windows.
+
+
+Using pip (experimental)
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: console
+
+   $ pip install --upgrade 'https://github.com/tkf/JuliaManager.jl/archive/master.zip#egg=jlm&subdirectory=jlm'
+
+**Note**: This may work in any platform.
+
 
 Examples
 --------
