@@ -20,7 +20,5 @@ setup(
     install_requires=[
         # "SOME_PACKAGE",
     ],
-    # entry_points={
-    #     "console_scripts": ["PROGRAM_NAME = jlm.cli:main"],
-    # },
+    entry_points={"console_scripts": ["jlm = jlm.cli:main"]},
 )
