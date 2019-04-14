@@ -15,7 +15,7 @@ matrix:
   include:
     - language: python
       env:
-        - TOXENV=black
+        - TOXENV=style
       os: linux
       python: "3.6"
       before_script:
