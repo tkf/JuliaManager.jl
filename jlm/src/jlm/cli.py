@@ -8,9 +8,9 @@ import sys
 import textwrap
 from pathlib import Path
 
+from . import __version__
 from .application import Application
 from .utils import ApplicationError
-from . import __version__
 
 doc_run = """
 Run `julia` executable with appropriate system image.

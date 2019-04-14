@@ -1,5 +1,4 @@
 import os
-
 from distutils.core import setup
 
 if os.environ.get("__JLM_DUMMY_BUILDING__", "no") != "yes":
