@@ -2,7 +2,7 @@ import os
 import subprocess
 import sys
 
-import pytest
+import pytest  # type: ignore
 
 from .. import cli
 from ..utils import ApplicationError, dlext, pathstr

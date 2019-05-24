@@ -1,4 +1,4 @@
-import pytest
+import pytest  # type: ignore
 
 from .. import cli
 from .testing import changingdir

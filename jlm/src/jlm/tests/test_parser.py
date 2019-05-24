@@ -1,4 +1,4 @@
-import pytest
+import pytest  # type: ignore
 
 from ..cli import Application, parse_args
 

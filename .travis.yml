@@ -13,7 +13,8 @@ addons:
       - python3-pip
 matrix:
   include:
-    - language: python
+    - &tox
+      language: python
       env:
         - TOXENV=style
       os: linux
@@ -24,6 +25,9 @@ matrix:
       script:
         - cd jlm && tox
       after_success: []
+    - <<: *tox
+      env:
+        - TOXENV=type
   allow_failures:
     - julia: nightly
   fast_finish: true
