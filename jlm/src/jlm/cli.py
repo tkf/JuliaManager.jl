@@ -181,6 +181,11 @@ def make_parser(doc=__doc__):
     p = locate_subp("dir", Application.cli_locate_local_dir)
     p = locate_subp("home-dir", Application.cli_locate_home_dir)
 
+    p = subp("ijulia-kernel", Application.cli_ijulia_kernel)
+    p.add_argument("--julia", nargs="?", help=doc_julia)
+    p.add_argument("--julia-option", action="append")
+    p.add_argument("connection_file")
+
     return parser
 
 

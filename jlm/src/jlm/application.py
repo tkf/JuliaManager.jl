@@ -329,3 +329,27 @@ class Application:
     def cli_locate_home_dir(self) -> None:
         """ Print directory in which `jlm` global information is stored. """
         print(self.homestore.path, end="")
+
+    def cli_ijulia_kernel(
+        self, julia_option: Optional[List[str]], connection_file: str
+    ) -> None:
+        """
+        An entrypoint to be called from Jupyter frontends.
+
+        This command is not meant to be directly used.  It is an
+        entrypoint to be invoked from `kernel.json`.
+        """
+        arguments = []
+        if julia_option:
+            assert isinstance(julia_option, list)
+            assert all(isinstance(a, str) for a in julia_option)
+            arguments.extend(julia_option)
+        arguments.extend(
+            [
+                "-e",
+                "import IJulia; "
+                'include(joinpath(dirname(pathof(IJulia)), "kernel.jl"))',
+                connection_file,
+            ]
+        )
+        self.cli_run(arguments)
