@@ -10,7 +10,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 from .datastore import HomeStore, LocalStore
 from .runtime import JuliaRuntime
-from .utils import ApplicationError, Cmd, _Pathish, dlext, pathstr
+from .utils import ApplicationError, Cmd, _Pathish, absolutepath, dlext, pathstr
 
 
 class SideEffect:
@@ -99,7 +99,7 @@ class Application:
         if jlm_dir is not None:
             jlm_dir = Path(jlm_dir)
             if LocalStore.is_valid_path(jlm_dir):
-                jlm_dir = jlm_dir.resolve()
+                jlm_dir = absolutepath(jlm_dir)
             else:
                 possible = jlm_dir / ".jlm"
                 if possible.exists():

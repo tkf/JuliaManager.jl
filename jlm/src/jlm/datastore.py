@@ -8,7 +8,7 @@ from typing import IO, Any, Dict, Iterator, List, Optional, Tuple
 
 from . import __version__
 from .runtime import JuliaRuntime
-from .utils import ApplicationError, Pathish, _Pathish, pathstr
+from .utils import ApplicationError, Pathish, _Pathish, absolutepath, pathstr
 
 
 @contextmanager
@@ -28,7 +28,7 @@ def locate_localstore(path: Path) -> Optional[Path]:
     while path != prev:
         candidate = path / ".jlm"
         if candidate.exists():
-            return candidate.resolve()
+            return absolutepath(candidate)
         prev = path
         path = path.parent
     return None
