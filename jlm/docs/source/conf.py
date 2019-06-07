@@ -24,9 +24,9 @@ copyright = "2019, Takafumi Arakaki"
 author = "Takafumi Arakaki"
 
 # The short X.Y version
-version = "0.1.2"
+version = "0.2.0"
 # The full version, including alpha/beta/rc tags
-release = "0.1.2-DEV"
+release = "0.2.0-DEV"
 
 
 # -- General configuration ---------------------------------------------------
