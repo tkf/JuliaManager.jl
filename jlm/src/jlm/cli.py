@@ -186,6 +186,57 @@ def make_parser(doc=__doc__):
     p.add_argument("--julia-option", action="append")
     p.add_argument("connection_file")
 
+    p = subp("install-ijulia-kernel", Application.cli_install_ijulia_kernel)
+    g = p.add_mutually_exclusive_group(required=True)
+    g.add_argument(
+        "--name",
+        help="""
+        Name of the kernel spec.  Typically, kernel spec is going to be
+        written into `~/.local/share/jupyter/kernels/NAME/kernel.json`.
+        """,
+    )
+    g.add_argument(
+        "--output-dir",
+        metavar="PATH",
+        help="""
+        Directory in which `kernel.json` is written.
+        """,
+    )
+    p.add_argument(
+        "--display-name",
+        help="""
+        Name of the kernel to be shown in Jupyter Lab, Notebook, etc.
+        Default to NAME.
+        """,
+    )
+    p.add_argument(
+        "--dont-store-jlm-dir",
+        dest="store_jlm_dir",
+        action="store_false",
+        default=True,
+        help="""
+        Do not --jlm-dir if specified.  This means that `.jlm` directory
+        is searched during run-time.
+        """,
+    )
+    p.add_argument(
+        "--julia-option",
+        action="append",
+        help="""
+        Option to be passed to Julia at run-time.  It can be specified
+        multiple times.
+        """,
+    )
+    p.add_argument(
+        "--jupyter",
+        default="jupyter",
+        help="""
+        Jupyter command line program.  This is used to locate the
+        directory in which kernel should be stored.  This is ignored
+        if `--output-dir"` is given.
+        """,
+    )
+
     return parser
 
 

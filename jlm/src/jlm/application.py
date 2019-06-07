@@ -1,3 +1,4 @@
+import json
 import os
 import shlex
 import subprocess
@@ -5,7 +6,7 @@ import sys
 import textwrap
 from pathlib import Path
 from shutil import which
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from .datastore import HomeStore, LocalStore
 from .runtime import JuliaRuntime
@@ -353,3 +354,85 @@ class Application:
             ]
         )
         self.cli_run(arguments)
+
+    def cli_install_ijulia_kernel(
+        self,
+        name: str,
+        output_dir: str,
+        jupyter: str,
+        display_name: Union[str],
+        store_jlm_dir: bool,
+        julia_option: Optional[List[str]],
+    ) -> None:
+        """
+        Install a Jupyter kernel that launches IJulia via jlm.
+        """
+        if output_dir:
+            kerneldir = Path(output_dir)
+        else:
+            paths = json.loads(
+                subprocess.check_output(
+                    [jupyter, "--paths", "--json"], universal_newlines=True
+                )
+            )
+            kerneldir = Path(paths["data"][0]) / "kernels" / name
+        if kerneldir.exists():
+            raise ApplicationError("Path {} already exists.".format(kerneldir))
+
+        for candidate in [sys.argv[0], str(Path(sys.executable).parent / "jlm")]:
+            self.eff.info("Checking if {} is an executable jlm CLI".format(candidate))
+            help_command = [candidate, "ijulia-kernel", "--help"]
+            try:
+                help_message = subprocess.check_output(
+                    help_command, universal_newlines=True
+                )
+            except (subprocess.CalledProcessError, PermissionError) as err:
+                self.eff.info("Got an error: {}".format(err))
+            else:
+                assert isinstance(self.cli_ijulia_kernel.__doc__, str)
+                if (
+                    self.cli_ijulia_kernel.__doc__.strip().splitlines()[0]
+                    in help_message
+                ):
+                    jlm_cmd = [candidate]
+                    break
+                else:
+                    self.eff.info(
+                        "Output from `{}` does not look right:\n{}".format(
+                            " ".join(help_command), help_message
+                        )
+                    )
+        else:
+            raise ApplicationError(
+                "`jlm` CLI is not properly installed."
+                " This command is ran via: {}".format(sys.argv[0])
+            )
+        # TODO: maybe try to use the bundled `jlm` script?
+
+        argv = jlm_cmd
+        if store_jlm_dir:
+            argv.extend(["--jlm-dir", str(self.localstore.path)])
+        argv.append("ijuila-kernel")
+        if self.julia:
+            argv.extend(["--julia", self.julia])
+        for opt in julia_option or ():
+            argv.append("--julia-option=" + opt)
+        argv.append("{connection_file}")
+
+        kernelspec = {
+            "argv": argv,
+            "display_name": display_name or kerneldir.name,
+            "language": "julia",
+        }
+
+        kernelpath = kerneldir / "kernel.json"
+        self.eff.ensuredir(kerneldir)
+        kerneljson = json.dumps(kernelspec, indent=1)
+        self.eff.info(
+            "Creating Jupyter kernel at {} with the following spec:\n{}".format(
+                kernelpath, kerneljson
+            )
+        )
+        if not self.dry_run:
+            with open(str(kernelpath), "w") as file:
+                file.write(kerneljson)
