@@ -28,6 +28,12 @@ matrix:
     - <<: *tox
       env:
         - TOXENV=type
+    - <<: *tox
+      before_install:
+        - curl https://raw.githubusercontent.com/JuliaCI/install-julia/master/install-julia.sh | bash -s - 1.1
+      env:
+        - TOXENV=py
+      python: "3.5"
   allow_failures:
     - julia: nightly
   fast_finish: true
