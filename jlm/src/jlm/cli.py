@@ -7,10 +7,14 @@ import subprocess
 import sys
 import textwrap
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from . import __version__
 from .application import Application
 from .utils import ApplicationError
+
+if TYPE_CHECKING:
+    from typing_extensions import Final
 
 doc_run = """
 Run `julia` executable with appropriate system image.
@@ -75,7 +79,7 @@ def make_parser(doc=__doc__):
         version="%(prog)s {} from {} ({} {})".format(
             __version__, Path(__file__).absolute().parent, sys.executable, pyversion
         ),
-    )
+    )  # type: Final
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--verbose", "-v", action="store_true")
     parser.add_argument("--pdb", action="store_true")
@@ -91,7 +95,7 @@ def make_parser(doc=__doc__):
         """,
     )
 
-    subparsers = parser.add_subparsers()
+    subparsers = parser.add_subparsers()  # type: Final
 
     def subp(command, func, doc=None, subparsers=subparsers):
         title, body = splitdoc(doc or func.__doc__)
@@ -164,8 +168,8 @@ def make_parser(doc=__doc__):
         "locate",
         formatter_class=FormatterClass,
         help="Show paths to related files and directories",
-    )
-    locate_subparsers = locate_parser.add_subparsers()
+    )  # type: Final
+    locate_subparsers = locate_parser.add_subparsers()  # type: Final
 
     def locate_subp(*args, **kwargs):
         return subp(*args, subparsers=locate_subparsers, *kwargs)
