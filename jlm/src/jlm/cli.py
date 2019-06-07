@@ -93,7 +93,7 @@ def make_parser(doc=__doc__):
 
     subparsers = parser.add_subparsers()
 
-    def subp(command, func, doc=None):
+    def subp(command, func, doc=None, subparsers=subparsers):
         title, body = splitdoc(doc or func.__doc__)
         p = subparsers.add_parser(
             command,
@@ -165,14 +165,17 @@ def make_parser(doc=__doc__):
         formatter_class=FormatterClass,
         help="Show paths to related files and directories",
     )
-    subparsers = locate_parser.add_subparsers()
+    locate_subparsers = locate_parser.add_subparsers()
 
-    p = subp("sysimage", Application.cli_locate_sysimage)
+    def locate_subp(*args, **kwargs):
+        return subp(*args, subparsers=locate_subparsers, *kwargs)
+
+    p = locate_subp("sysimage", Application.cli_locate_sysimage)
     p.add_argument("julia", nargs="?", help=doc_julia)
 
-    p = subp("base", Application.cli_locate_base)
-    p = subp("dir", Application.cli_locate_local_dir)
-    p = subp("home-dir", Application.cli_locate_home_dir)
+    p = locate_subp("base", Application.cli_locate_base)
+    p = locate_subp("dir", Application.cli_locate_local_dir)
+    p = locate_subp("home-dir", Application.cli_locate_home_dir)
 
     return parser
 
