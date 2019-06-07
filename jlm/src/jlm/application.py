@@ -412,7 +412,7 @@ class Application:
         argv = jlm_cmd
         if store_jlm_dir:
             argv.extend(["--jlm-dir", str(self.localstore.path)])
-        argv.append("ijuila-kernel")
+        argv.append("ijulia-kernel")
         if self.julia:
             argv.extend(["--julia", self.julia])
         for opt in julia_option or ():
